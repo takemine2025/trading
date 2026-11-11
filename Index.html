@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meridian — OK</title>
+<style>body{font-family:system-ui;background:#070b10;color:#eaf2f8;padding:28px} .c{max-width:640px;margin:auto;background:#0d141d;border:1px solid #223349;border-radius:16px;padding:22px} .ok{color:#2fe07a}.bad{color:#ff5d6a} code{background:#0005;padding:2px 6px;border-radius:6px}</style></head>
+<body><div class="c"><h1>MERIDIAN — Page found ✅</h1><p>If you see this, the 404 is fixed. The file is in the right folder with the right name.</p><h2 id="s">Checking Supabase…</h2><pre id="o"></pre><p>Next: put your full dashboard <code>index.html</code> in this <b>same</b> folder, with the <b>exact</b> name <code>index.html</code>, and hard-refresh (Ctrl+Shift+R).</p></div>
+<script src="config.js"></script><script>
+(async()=>{
+ const cfg=window.MERIDIAN_CONFIG||{}; const out=document.getElementById('o'), st=document.getElementById('s');
+ if(!cfg.url||!cfg.anon){ st.innerHTML='<span class=bad>config.js is missing / empty — add url + anon key</span>'; out.textContent='config.js must sit next to index.html and contain window.MERIDIAN_CONFIG = { url:"https://xxx.supabase.co", anon:"eyJ..." }'; return; }
+ try{ const r=await fetch(cfg.url.replace(/\/$/,'')+'/rest/v1/heartbeat?select=*&id=eq.1',{headers:{apikey:cfg.anon,Authorization:'Bearer '+cfg.anon}});
+ const j=await r.json(); if(!r.ok) throw new Error(JSON.stringify(j).slice(0,300));
+ const age=j[0]?Math.round((Date.now()-new Date(j[0].ts).getTime())/1000):null;
+ st.innerHTML=age==null?'Connected, but no heartbeat row yet — run SQL + python main.py':age>180?'<span class=bad>Connected, backend OFFLINE — heartbeat '+age+'s ago. Keep python main.py running.</span>':'<span class=ok>● ONLINE — heartbeat '+age+'s ago</span>';
+ out.textContent=JSON.stringify(j,null,2);
+ }catch(e){ st.innerHTML='<span class=bad>Cannot reach Supabase: '+e.message+'</span>'; }
+})();
+</script></body></html>
